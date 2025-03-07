@@ -17,7 +17,7 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Get next version
-        uses: MiguelRipoll23/get-next-version@v3
+        uses: MiguelRipoll23/get-next-version@v3.0.0
         id: get-next-version
         with:
           major-labels: backwards-incompatible,breaking
@@ -30,7 +30,7 @@ jobs:
           NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
 
       - name: Generate release changelog
-        uses: janheinrichmerker/action-github-changelog-generator@v2
+        uses: janheinrichmerker/action-github-changelog-generator@v2.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           futureRelease: ${{ steps.get-next-version.outputs.next-version }}
