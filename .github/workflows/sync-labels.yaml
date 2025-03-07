@@ -2,6 +2,12 @@ name: Sync labels
 
 on:
   workflow_call:
+    inputs:
+      delete-other-labels:
+        description: "Delete labels not set up in our config file?"
+        default: true
+        required: false
+        type: boolean
 
 jobs:
   sync:
@@ -12,3 +18,4 @@ jobs:
       - uses: EndBug/label-sync@v2
         with:
           config-file: 'https://raw.githubusercontent.com/RegioHelden/.github/refs/heads/main/labels.yaml'
+          delete-other-labels: ${{ delete-other-labels }}
