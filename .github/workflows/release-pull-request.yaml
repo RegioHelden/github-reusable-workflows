@@ -3,62 +3,63 @@
 on:
   workflow_call:
 
-release-pull-request:
-  name: Make a new release
-  runs-on: ubuntu-latest
+jobs:
+  release-pr:
+    name: Make a new release
+    runs-on: ubuntu-latest
 
-  permissions:
-    contents: write
-    pull-requests: write
+    permissions:
+      contents: write
+      pull-requests: write
 
-  steps:
-  - name: Install the latest version of uv
-    uses: astral-sh/setup-uv@v5
+    steps:
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
 
-  - name: Get next version
-    uses: MiguelRipoll23/get-next-version@v3
-    id: get-next-version
-    with:
-      major-labels:
-        - backwards-incompatible
-        - breaking
-      minor-labels:
-        - feature
-        - enhancement
-        - improvement
-      patch-labels:
-        - bug
+      - name: Get next version
+        uses: MiguelRipoll23/get-next-version@v3
+        id: get-next-version
+        with:
+          major-labels:
+            - backwards-incompatible
+            - breaking
+          minor-labels:
+            - feature
+            - enhancement
+            - improvement
+          patch-labels:
+            - bug
 
-  - name: Update version
-    run: uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version ${{ env.NEXT_VERSION }}
-    env:
-      NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
+      - name: Update version
+        run: uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version ${{ env.NEXT_VERSION }}
+        env:
+          NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
 
-  - name: "Generate release changelog"
-    uses: janheinrichmerker/action-github-changelog-generator@v2
-    with:
-      token: ${{ secrets.GITHUB_TOKEN }}
-      futureRelease: ${{ steps.get-next-version.outputs.next-version }}
-      breakingLabels:
-        - backwards-incompatible
-        - breaking
-      enhancementLabel:
-        - feature
-        - enhancement
-        - improvement
-      bugsLabel:
-        - bug
-      excludeLabels:
-        - skip-changelog
-      output: CHANGELOG.md
-      usernamesAsGithubLogins: true
+      - name: "Generate release changelog"
+        uses: janheinrichmerker/action-github-changelog-generator@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          futureRelease: ${{ steps.get-next-version.outputs.next-version }}
+          breakingLabels:
+            - backwards-incompatible
+            - breaking
+          enhancementLabel:
+            - feature
+            - enhancement
+            - improvement
+          bugsLabel:
+            - bug
+          excludeLabels:
+            - skip-changelog
+          output: CHANGELOG.md
+          usernamesAsGithubLogins: true
 
-  - name: Create pull request
-    uses: peter-evans/create-pull-request@v7
-    with:
-      branch: release-${{ steps.get-next-version.outputs.next-version }}
-      commit-message: release ${{ steps.get-next-version.outputs.next-version }}
-      title: Release ${{ steps.get-next-version.outputs.next-version }}
-      body: Automated pull request triggered by a new release.
-      labels: skip-changelog
-      draft: true
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: release-${{ steps.get-next-version.outputs.next-version }}
+          commit-message: release ${{ steps.get-next-version.outputs.next-version }}
+          title: Release ${{ steps.get-next-version.outputs.next-version }}
+          body: Automated pull request triggered by a new release.
+          labels: skip-changelog
+          draft: true
