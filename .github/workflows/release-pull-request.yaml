@@ -20,15 +20,9 @@ jobs:
         uses: MiguelRipoll23/get-next-version@v3
         id: get-next-version
         with:
-          major-labels:
-            - backwards-incompatible
-            - breaking
-          minor-labels:
-            - feature
-            - enhancement
-            - improvement
-          patch-labels:
-            - bug
+          major-labels: backwards-incompatible,breaking
+          minor-labels: feature,enhancement,improvement
+          patch-labels: bug
 
       - name: Update version
         run: uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version ${{ env.NEXT_VERSION }}
@@ -40,17 +34,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           futureRelease: ${{ steps.get-next-version.outputs.next-version }}
-          breakingLabels:
-            - backwards-incompatible
-            - breaking
-          enhancementLabel:
-            - feature
-            - enhancement
-            - improvement
-          bugsLabel:
-            - bug
-          excludeLabels:
-            - skip-changelog
+          breakingLabels: backwards-incompatible,breaking
+          enhancementLabel: feature,enhancement,improvement
+          bugsLabel: bug
+          excludeLabels: skip-changelog
           output: CHANGELOG.md
           usernamesAsGithubLogins: true
 
