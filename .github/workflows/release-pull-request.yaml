@@ -4,8 +4,8 @@ on:
   workflow_call:
 
 jobs:
-  release-pr:
-    name: Make a new release
+  open-release-pr:
+    name: Release pull request
     runs-on: ubuntu-latest
 
     permissions:
@@ -35,7 +35,7 @@ jobs:
         env:
           NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
 
-      - name: "Generate release changelog"
+      - name: Generate release changelog
         uses: janheinrichmerker/action-github-changelog-generator@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
