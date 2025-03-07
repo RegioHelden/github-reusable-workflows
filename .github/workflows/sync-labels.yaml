@@ -1,0 +1,14 @@
+name: Sync labels
+
+on:
+  workflow_call:
+
+jobs:
+  sync:
+    name: Sync labels from config
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EndBug/label-sync@v2
+        with:
+          config-file: 'https://raw.githubusercontent.com/RegioHelden/.github/refs/heads/main/labels.yaml'
