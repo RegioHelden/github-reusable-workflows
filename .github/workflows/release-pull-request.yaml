@@ -3,7 +3,7 @@
 on:
   workflow_call:
 
-release-merge-request:
+release-pull-request:
   name: Make a new release
   runs-on: ubuntu-latest
 
