@@ -39,11 +39,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           futureRelease: ${{ steps.get-next-version.outputs.next-version }}
           breakingLabels: backwards-incompatible,breaking
-          enhancementLabel: feature,enhancement,improvement
-          bugsLabel: bug
+          removedLabels: removal
+          enhancementLabels: feature,enhancement,improvement
+          bugLabels: bug
           excludeLabels: skip-changelog
           output: CHANGELOG.md
           usernamesAsGithubLogins: true
+          stripGeneratorNotice: true
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
