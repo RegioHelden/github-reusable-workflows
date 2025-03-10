@@ -8,10 +8,6 @@ jobs:
     name: Tag release
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-      pull-requests: write
-
     steps:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v5
@@ -27,26 +23,12 @@ jobs:
 
       - name: Get latest git tag
         id: latest-tag
-        # allow to fail as there might not be an initial tag yet
-        continue-on-error: true
-        run: echo "LATEST_TAG=$(set -o pipefail; git describe --tag --abbrev=0 | cut -c 2-)" >> $GITHUB_OUTPUT
-
-      - name: Debug step status
-        # allow to fail as there might not be an initial tag yet
-        continue-on-error: true
-        run: | 
-          echo $PROJECT_VERSION
-          echo $LATEST_TAG
-          echo $LATEST_TAG_OUTCOME
-        env:
-          PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
-          LATEST_TAG: ${{ steps.latest-tag.outputs.LATEST_TAG }}
-          LATEST_TAG_OUTCOME: ${{ steps.latest-tag.outcome }}
+        run: echo "LATEST_TAG=$(git tag -l --sort=-creatordate | head -n 1 | grep -E '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?')" >> $GITHUB_OUTPUT
 
       - name: Get version diff
         id: version-diff
         # only compare if a previous git tag was found
-        if: steps.latest-tag.outcome != 'failure'
+        if: steps.latest-tag.outputs.LATEST_TAG != ''
         run: echo "VERSION_DIFF=$(uvx --from=semver pysemver compare ${{ env.PROJECT_VERSION }} ${{ env.LATEST_TAG }})" >> $GITHUB_OUTPUT
         env:
           PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
@@ -55,6 +37,6 @@ jobs:
       - name: Create git tag
         uses: rickstaa/action-create-tag@v1
         # either we found a new release requirement or there was never a release made before
-        if: (steps.version-diff.outcome != 'skipped' && steps.version-diff.VERSION_DIFF == 1) || steps.latest-tag.outcome == 'failure'
+        if: (steps.latest-tag.outputs.LATEST_TAG != '' && steps.version-diff.VERSION_DIFF == 1) || steps.latest-tag.outputs.LATEST_TAG == ''
         with:
-          tag: "${{ steps.project-version.outputs.PROJECT_VERSION }}"
+          tag: "v${{ steps.project-version.outputs.PROJECT_VERSION }}"
