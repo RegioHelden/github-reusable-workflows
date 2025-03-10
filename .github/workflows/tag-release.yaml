@@ -34,7 +34,7 @@ jobs:
       - name: Get version diff
         id: version-diff
         # only compare if a previous git tag was found
-        if: steps.latest-tag.conclusion != 'failure'
+        if: steps.latest-tag.outcome != 'failure'
         run: echo "VERSION_DIFF=$(uvx --from=semver pysemver compare ${{ env.PROJECT_VERSION }} ${{ env.LATEST_TAG }})" >> $GITHUB_OUTPUT
         env:
           PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
@@ -43,6 +43,6 @@ jobs:
       - name: Create git tag
         uses: rickstaa/action-create-tag@v1
         # either we found a new release requirement or there was never a release made before
-        if: (success() && steps.version-diff.VERSION_DIFF == 1) || steps.latest-tag.conclusion == 'failure'
+        if: (steps.version-diff.outcome != 'skipped' && steps.version-diff.VERSION_DIFF == 1) || steps.latest-tag.outcome == 'failure'
         with:
           tag: "${{ steps.project-version.outputs.PROJECT_VERSION }}"
