@@ -23,7 +23,15 @@ jobs:
 
       - name: Get latest git tag
         id: latest-tag
-        run: echo "LATEST_TAG=$(git tag -l --sort=-creatordate | head -n 1 | grep -oE '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?')" >> $GITHUB_OUTPUT
+        run: echo "LATEST_TAG=$(git tag --list --sort=-v:refname | head -n 1 | grep -oE '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?')" >> $GITHUB_OUTPUT
+
+      - name: Print current versions
+        run: |
+          echo "latest tag: $LATEST_TAG"
+          echo "project version: $PROJECT_VERSION"
+        env:
+          LATEST_TAG: ${{ steps.latest-tag.outputs.LATEST_TAG }}
+          PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
 
       - name: Get version diff
         id: version-diff
@@ -31,8 +39,8 @@ jobs:
         if: steps.latest-tag.outputs.LATEST_TAG != ''
         run: echo "VERSION_DIFF=$(uvx --from=semver pysemver compare ${{ env.PROJECT_VERSION }} ${{ env.LATEST_TAG }})" >> $GITHUB_OUTPUT
         env:
-          PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
           LATEST_TAG: ${{ steps.latest-tag.outputs.LATEST_TAG }}
+          PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
 
       - name: Create git tag
         uses: rickstaa/action-create-tag@v1
