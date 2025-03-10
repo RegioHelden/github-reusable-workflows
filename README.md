@@ -21,3 +21,10 @@ Lint and format using ruff.
 
 Parameters:
 * `ruff-version`
+
+## release-pull-request.yaml
+
+Open a pull request for a new release
+
+- Generate a changelog based on the labels assigned to PRs and issues
+- Increase the version in pyproject.toml accordingly

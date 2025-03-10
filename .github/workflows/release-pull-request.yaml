@@ -24,7 +24,7 @@ jobs:
         uses: MiguelRipoll23/get-next-version@v3.0.0
         id: get-next-version
         with:
-          major-labels: backwards-incompatible,breaking
+          major-labels: backwards-incompatible,breaking,removal
           minor-labels: feature,enhancement,improvement
           patch-labels: bug
 
