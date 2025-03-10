@@ -23,7 +23,7 @@ jobs:
 
       - name: Get latest git tag
         id: latest-tag
-        run: echo "LATEST_TAG=$(git tag -l --sort=-creatordate | head -n 1 | grep -E '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?')" >> $GITHUB_OUTPUT
+        run: echo "LATEST_TAG=$(git tag -l --sort=-creatordate | head -n 1 | grep -oE '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?')" >> $GITHUB_OUTPUT
 
       - name: Get version diff
         id: version-diff
