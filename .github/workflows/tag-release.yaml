@@ -31,6 +31,18 @@ jobs:
         continue-on-error: true
         run: echo "LATEST_TAG=$(set -o pipefail; git describe --tag --abbrev=0 | cut -c 2-)" >> $GITHUB_OUTPUT
 
+      - name: Debug step status
+        # allow to fail as there might not be an initial tag yet
+        continue-on-error: true
+        run: | 
+          echo $PROJECT_VERSION
+          echo $LATEST_TAG
+          echo $LATEST_TAG_OUTCOME
+        env:
+          PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
+          LATEST_TAG: ${{ steps.latest-tag.outputs.LATEST_TAG }}
+          LATEST_TAG_OUTCOME: ${{ steps.latest-tag.outcome }}
+
       - name: Get version diff
         id: version-diff
         # only compare if a previous git tag was found
