@@ -1,0 +1,45 @@
+---
+
+on:
+  workflow_call:
+
+jobs:
+  tag-release:
+    name: Tag release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Get version from pyproject.toml
+        id: project-version
+        run: echo "PROJECT_VERSION=$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.version)" >> $GITHUB_OUTPUT
+
+      - name: Get latest git tag
+        id: latest-tag
+        # allow to fail as there might not be an initial tag yet
+        continue-on-error: true
+        run: echo "LATEST_TAG=$(git describe --tag --abbrev=0 | cut -c 2-)" >> $GITHUB_OUTPUT
+
+      - name: Get version diff
+        id: version-diff
+        # only compare if a previous git tag was found
+        if: steps.latest-tag.conclusion != 'failure'
+        run: echo "VERSION_DIFF=$(uvx --from=semver pysemver compare ${{ env.PROJECT_VERSION }} ${{ env.LATEST_TAG }})" >> $GITHUB_OUTPUT
+        env:
+          PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
+          LATEST_TAG: ${{ steps.latest-tag.outputs.LATEST_TAG }}
+
+      - name: Create git tag
+        uses: rickstaa/action-create-tag@v1
+        # either we found a new release requirement or there was never a release made before
+        if: (success() && steps.version-diff.VERSION_DIFF == 1) || steps.latest-tag.conclusion == 'failure'
+        with:
+          tag: "${{ steps.project-version.outputs.PROJECT_VERSION }}"

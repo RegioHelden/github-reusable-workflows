@@ -48,11 +48,6 @@ jobs:
           usernamesAsGithubLogins: true
           stripGeneratorNotice: true
 
-      - name: Create git tag
-        uses: rickstaa/action-create-tag@v1
-        with:
-          tag: "v${{ steps.get-next-version.outputs.next-version }}"
-
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
         with:
