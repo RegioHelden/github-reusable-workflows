@@ -13,7 +13,8 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
 
@@ -28,7 +29,7 @@ jobs:
           minor-labels: feature,enhancement,improvement
           patch-labels: bug
 
-      - name: Update version
+      - name: Update version in pyproject.toml
         run: uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version ${{ env.NEXT_VERSION }}
         env:
           NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
@@ -46,6 +47,11 @@ jobs:
           output: CHANGELOG.md
           usernamesAsGithubLogins: true
           stripGeneratorNotice: true
+
+      - name: Create git tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "v${{ steps.get-next-version.outputs.next-version }}"
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v7
