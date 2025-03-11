@@ -34,9 +34,6 @@ jobs:
         id: project-version
         run: echo "PROJECT_VERSION=$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.version)" >> $GITHUB_OUTPUT
 
-      - name: Show all tags
-        run: git tag --list --sort=-v:refname
-
       - name: Get latest git tag
         id: latest-tag
         run: echo "LATEST_TAG=$(git tag --list --sort=-v:refname | head -n 1 | grep -oE '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?')" >> $GITHUB_OUTPUT
