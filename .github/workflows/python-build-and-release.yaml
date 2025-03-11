@@ -1,0 +1,68 @@
+---
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: "The Python version used during the build"
+        default: "3.12"
+        required: false
+        type: string
+
+jobs:
+  python-build-package:
+    name: Build Python package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build
+        run: uv build
+
+      - name: Publish
+        run: uv publish
+
+      - name: Sign dists
+        uses: sigstore/gh-action-sigstore-python@v3.0.0
+        with:
+          inputs: >-
+            ./dist/*.tar.gz
+            ./dist/*.whl
+
+      - name: Generate changelog
+        id: changelog
+        uses: janheinrichmerker/action-github-changelog-generator@v2.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          breakingLabels: backwards-incompatible,breaking
+          removedLabels: removal
+          enhancementLabels: feature,enhancement,improvement
+          bugLabels: bug
+          excludeLabels: skip-changelog
+          output: ""  # to force output to stdout
+          usernamesAsGithubLogins: true
+          stripGeneratorNotice: true
+          onlyLastTag: true
+
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "dist/**"
+          body: ${{ steps.changelog.outputs.changelog }}
+          makeLatest: true
+
+      - name: Store artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
