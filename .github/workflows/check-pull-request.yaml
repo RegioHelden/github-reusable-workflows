@@ -1,0 +1,17 @@
+---
+
+on:
+  workflow_call:
+
+jobs:
+  check-pull-request:
+    name: Check pull request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make sure a label is assigned
+        uses: mheap/github-action-required-labels@v5
+        with:
+          mode: exactly
+          count: 1
+          labels: ".*"
+          use_regex: true
