@@ -3,6 +3,10 @@
 on:
   workflow_call:
     inputs:
+      commit-key:
+        description: "The ssh key used to commit to git"
+        required: true
+        type: string
       python-version:
         description: "The Python version used during the build"
         default: "3.12"
@@ -15,11 +19,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if COMMIT_KEY secret is set
-        env: 
-            secret_commit_key: ${{ secrets.COMMIT_KEY }}
-        if: ${{ env.secret_commit_key == '' }}
-        run: echo "COMMIT_KEY secret is not set, please check the documentation on https://github.com/RegioHelden/github-reusable-workflows" && exit 1
+      - name: Check if commit key is set
+        env:
+            secret_commit_key: "${{ inputs.commit-key }}"
+        if: ${{ inputs.commit-key == '' }}
+        run: echo "commit-key input is not set, please check the documentation on https://github.com/RegioHelden/github-reusable-workflows" && exit 1
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -31,7 +35,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-          ssh-key: "${{ secrets.COMMIT_KEY }}"
+          ssh-key: "${{ inputs.commit-key }}"
 
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v5
