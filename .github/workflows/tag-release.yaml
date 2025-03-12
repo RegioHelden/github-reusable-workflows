@@ -15,17 +15,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check if COMMIT_KEY secret is set
+        env: 
+            secret_commit_key: ${{ secrets.COMMIT_KEY }}
+        if: ${{ env.secret_commit_key == '' }}
+        run: echo "COMMIT_KEY secret is not set, please check the documentation on https://github.com/RegioHelden/github-reusable-workflows" && exit 1
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: "${{ inputs.python-version }}"
 
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
           fetch-depth: 0
           fetch-tags: true
+          ssh-key: "${{ secrets.COMMIT_KEY }}"
 
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v5
