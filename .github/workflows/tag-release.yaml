@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-          ssh-key: "${{ secrets.commit-key }}"
+          token: "${{ secrets.commit-key }}"
 
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v5
