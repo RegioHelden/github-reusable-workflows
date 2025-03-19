@@ -5,7 +5,6 @@ on:
     secrets:
       personal-access-token:
         required: true
-        type: string
     inputs:
       python-version:
         description: "The Python version used during the build"
