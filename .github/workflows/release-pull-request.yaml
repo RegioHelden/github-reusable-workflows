@@ -2,6 +2,9 @@
 
 on:
   workflow_call:
+    secrets:
+      personal-access-token:
+        required: true
 
 jobs:
   open-release-pr:
@@ -16,7 +19,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          token: "${{ secrets.personal-access-token }}"
 
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v5
@@ -56,4 +59,5 @@ jobs:
           title: Release ${{ steps.get-next-version.outputs.next-version }}
           body: Automated pull request triggered by a new release.
           labels: skip-changelog
+          token: "${{ secrets.personal-access-token }}"
           draft: true
