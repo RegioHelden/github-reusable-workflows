@@ -30,7 +30,7 @@ jobs:
           patch-labels: bug
 
       - name: Update version in pyproject.toml
-        run: uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version ${{ env.NEXT_VERSION }}
+        run: uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version `echo ${{ env.NEXT_VERSION }} | grep -oE '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?'`
         env:
           NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
 
