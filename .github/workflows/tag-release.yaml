@@ -64,4 +64,3 @@ jobs:
         if: (steps.latest-tag.outputs.LATEST_TAG != '' && steps.version-diff.VERSION_DIFF == 1) || steps.latest-tag.outputs.LATEST_TAG == ''
         with:
           tag: "v${{ steps.project-version.outputs.PROJECT_VERSION }}"
-          github_token: "${{ secrets.personal-access-token }}"
