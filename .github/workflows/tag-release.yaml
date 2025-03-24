@@ -58,6 +58,12 @@ jobs:
           LATEST_TAG: ${{ steps.latest-tag.outputs.LATEST_TAG }}
           PROJECT_VERSION: ${{ steps.project-version.outputs.PROJECT_VERSION }}
 
+      - name: Print diff result
+        run: |
+          echo "version diff: $VERSION_DIFF"
+        env:
+          VERSION_DIFF: ${{ steps.version-diff.VERSION_DIFF }}
+
       - name: Create git tag
         uses: rickstaa/action-create-tag@v1
         # either we found a new release requirement or there was never a release made before
