@@ -62,11 +62,11 @@ jobs:
         run: |
           echo "version diff: $VERSION_DIFF"
         env:
-          VERSION_DIFF: ${{ steps.version-diff.VERSION_DIFF }}
+          VERSION_DIFF: ${{ steps.version-diff.outputs.VERSION_DIFF }}
 
       - name: Create git tag
         uses: rickstaa/action-create-tag@v1
         # either we found a new release requirement or there was never a release made before
-        if: (steps.latest-tag.outputs.LATEST_TAG != '' && steps.version-diff.VERSION_DIFF == 1) || steps.latest-tag.outputs.LATEST_TAG == ''
+        if: (steps.latest-tag.outputs.LATEST_TAG != '' && steps.version-diff.outputs.VERSION_DIFF == 1) || steps.latest-tag.outputs.LATEST_TAG == ''
         with:
           tag: "v${{ steps.project-version.outputs.PROJECT_VERSION }}"
