@@ -41,6 +41,14 @@ jobs:
     needs:
       - build
     steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Download the distribution packages
         uses: actions/download-artifact@v4
         with:
