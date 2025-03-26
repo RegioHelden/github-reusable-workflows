@@ -40,39 +40,11 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-  publish-pypi:
-    name: Publish on PyPI
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ inputs.python-version }}
-
-      # required so that uv can read index information from pyproject.toml
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v5
-
-      - name: Download the distribution packages
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-
-      - name: Publish
-        run: uv publish --index ${{ inputs.deploy-index }}
-
   publish-github:
     name: Publish on GitHub
     runs-on: ubuntu-latest
     needs:
-      - publish-pypi
+      - build
     steps:
       - name: Sign dists
         uses: sigstore/gh-action-sigstore-python@v3.0.0
@@ -114,3 +86,31 @@ jobs:
           gh release upload
           "${{ github.ref_name }}" dist/**
           --repo "${{ github.repository }}"
+
+  publish-pypi:
+    name: Publish on PyPI
+    runs-on: ubuntu-latest
+    needs:
+      - publish-github
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      # required so that uv can read index information from pyproject.toml
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Download the distribution packages
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish
+        run: uv publish --index ${{ inputs.deploy-index }}
