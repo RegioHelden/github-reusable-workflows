@@ -45,6 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:                            
       id-token: write
+      contents: write
     needs:
       - build
     steps:
@@ -65,21 +66,6 @@ jobs:
             ./dist/*.tar.gz
             ./dist/*.whl
 
-      - name: Generate changelog
-        id: changelog
-        uses: janheinrichmerker/action-github-changelog-generator@v2.4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          breakingLabels: backwards-incompatible,breaking
-          removedLabels: removal
-          enhancementLabels: feature,enhancement,improvement
-          bugLabels: bug
-          excludeLabels: skip-changelog
-          output: ""  # to force output to stdout
-          usernamesAsGithubLogins: true
-          stripGeneratorNotice: true
-          onlyLastTag: true
-
       - name: Create GitHub release
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -88,7 +74,7 @@ jobs:
           "${{ github.ref_name }}"
           --repo "${{ github.repository }}"
           --title "Release ${{ github.ref_name }}"
-          --notes "${{ steps.changelog.outputs.changelog }}"
+          --notes "see CHANGLOG.md"
           --latest
 
       - name: Upload artifacts and signatures to GitHub release
