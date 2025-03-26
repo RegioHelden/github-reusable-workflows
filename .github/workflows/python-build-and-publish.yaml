@@ -2,6 +2,13 @@
 
 on:
   workflow_call:
+    secrets:
+      actions-id-token-request-url:
+        description: "The URL to GitHub's OIDC provider, use environment variable ACTIONS_ID_TOKEN_REQUEST_URL"
+        required: true
+      actions-id-token-request-token:
+        description: "Bearer token for the request to the OIDC provider, use environment variable ACTIONS_ID_TOKEN_REQUEST_TOKEN"
+        required: true
     inputs:
       python-version:
         description: "The Python version used during the build"
@@ -18,6 +25,8 @@ jobs:
   build:
     name: Build Python package
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -90,6 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:                            
       id-token: write
+      contents: read
     needs:
       - publish-github
     steps:
@@ -115,7 +125,13 @@ jobs:
       - name: Publish to alternative index
         if: inputs.deploy-index != ''
         run: uv publish --trusted-publishing always --index ${{ inputs.deploy-index }}
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ secrets.actions-id-token-request-url }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.actions-id-token-request-token }}
 
       - name: Publish
         if: inputs.deploy-index == ''
         run: uv publish --trusted-publishing always
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ secrets.actions-id-token-request-url }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.actions-id-token-request-token }}
