@@ -10,7 +10,7 @@ on:
         type: string
       deploy-index:
         description: "The uv index to publish to"
-        default: "pypi"
+        default: ""
         required: false
         type: string
 
@@ -88,6 +88,8 @@ jobs:
   publish-pypi:
     name: Publish on PyPI
     runs-on: ubuntu-latest
+    permissions:                            
+      id-token: write
     needs:
       - publish-github
     steps:
@@ -110,5 +112,10 @@ jobs:
           name: python-package-distributions
           path: dist/
 
+      - name: Publish to alternative index
+        if: inputs.deploy-index != ''
+        run: uv publish --trusted-publishing always --index ${{ inputs.deploy-index }}
+
       - name: Publish
-        run: uv publish --index ${{ inputs.deploy-index }}
+        if: inputs.deploy-index == ''
+        run: uv publish --trusted-publishing always
