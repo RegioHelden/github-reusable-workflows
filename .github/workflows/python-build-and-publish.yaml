@@ -87,38 +87,38 @@ jobs:
           "${{ github.ref_name }}" dist/**
           --repo "${{ github.repository }}"
 
-  publish-pypi:
-    name: Publish on PyPI
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    needs:
-      - publish-github
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ inputs.python-version }}
+  # publish-pypi:
+  #   name: Publish on PyPI
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     id-token: write
+  #   needs:
+  #     - publish-github
+  #   steps:
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: ${{ inputs.python-version }}
 
-      # required so that uv can read index information from pyproject.toml
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+  #     # required so that uv can read index information from pyproject.toml
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         persist-credentials: false
 
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v5
+  #     - name: Install the latest version of uv
+  #       uses: astral-sh/setup-uv@v5
 
-      - name: Download the distribution packages
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
+  #     - name: Download the distribution packages
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: python-package-distributions
+  #         path: dist/
 
-      - name: Publish to alternative index
-        if: inputs.deploy-index != ''
-        run: uv publish --trusted-publishing always --index ${{ inputs.deploy-index }}
+  #     - name: Publish to alternative index
+  #       if: inputs.deploy-index != ''
+  #       run: uv publish --trusted-publishing always --index ${{ inputs.deploy-index }}
 
-      - name: Publish
-        if: inputs.deploy-index == ''
-        run: uv publish --trusted-publishing always
+  #     - name: Publish
+  #       if: inputs.deploy-index == ''
+  #       run: uv publish --trusted-publishing always
