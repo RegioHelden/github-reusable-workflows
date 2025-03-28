@@ -8,11 +8,11 @@ on:
         default: "3.12"
         required: false
         type: string
-      deploy-index:
-        description: "The uv index to publish to"
-        default: ""
-        required: false
-        type: string
+      # deploy-index:
+      #   description: "The uv index to publish to"
+      #   default: ""
+      #   required: false
+      #   type: string
 
 jobs:
   build:
