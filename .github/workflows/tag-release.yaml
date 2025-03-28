@@ -16,7 +16,8 @@ jobs:
   tag-release:
     name: Tag release
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
       - name: Set up Python
         uses: actions/setup-python@v5

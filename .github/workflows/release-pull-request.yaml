@@ -10,11 +10,9 @@ jobs:
   open-release-pr:
     name: Release pull request
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
       pull-requests: write
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

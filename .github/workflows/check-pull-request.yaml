@@ -7,6 +7,9 @@ jobs:
   check-pull-request:
     name: Check pull request
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - name: Make sure a label is assigned
         uses: mheap/github-action-required-labels@v5
@@ -15,3 +18,5 @@ jobs:
           count: 1
           labels: ".*"
           use_regex: true
+          add_comment: true
+          message: "A label must be assigned before this PR can be merged."

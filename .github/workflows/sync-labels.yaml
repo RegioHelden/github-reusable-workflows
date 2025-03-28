@@ -13,6 +13,8 @@ jobs:
   sync:
     name: Sync labels from config
     runs-on: ubuntu-24.04
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v4
       - uses: EndBug/label-sync@v2
