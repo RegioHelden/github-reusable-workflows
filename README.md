@@ -99,7 +99,10 @@ jobs:
   # see https://github.com/RegioHelden/github-reusable-workflows/blob/main/.github/workflows/sync-labels.yaml
   update-labels:
     name: Update labels
+    permissions:
+      issues: write
     uses: RegioHelden/github-reusable-workflows/.github/workflows/sync-labels.yaml@main
+
 ```
 
 ### Check code
@@ -122,8 +125,10 @@ Usually called `workflow.yaml`
 name: Check code
 
 on:
-  # code pushed
+  # code pushed to pull request branch
   push:
+    branches-ignore:
+      - main
   # when draft state is removed (needed as automatically created PRs are not triggering this action)
   pull_request:
     types: [ready_for_review]
@@ -133,10 +138,12 @@ jobs:
   # see https://github.com/RegioHelden/github-reusable-workflows/blob/main/.github/workflows/python-ruff.yaml
   lint:
     name: Lint
+    permissions:
+      contents: read
     uses: RegioHelden/github-reusable-workflows/.github/workflows/python-ruff.yaml@main
     with:
       ruff-version: "0.11.0"
-      python-version: "3.12"
+
 ```
 
 ### Check pull request
@@ -162,7 +169,11 @@ jobs:
   # see https://github.com/RegioHelden/github-reusable-workflows/blob/main/.github/workflows/check-pull-request.yaml
   check-pull-request:
     name: Check pull request
+    permissions:
+      issues: write
+      pull-requests: write
     uses: RegioHelden/github-reusable-workflows/.github/workflows/check-pull-request.yaml@main
+
 ```
 
 ### Trigger a new release
@@ -192,9 +203,13 @@ jobs:
   # see https://github.com/RegioHelden/github-reusable-workflows/blob/main/.github/workflows/release-pull-request.yaml
   open-release-pr:
     name: Open release PR
+    permissions:
+      contents: write
+      pull-requests: write
     uses: RegioHelden/github-reusable-workflows/.github/workflows/release-pull-request.yaml@main
     secrets:
       personal-access-token: "${{ secrets.COMMIT_KEY }}"
+
 ```
 
 ### Create git tag
@@ -219,20 +234,21 @@ Usually called `tag-release.yaml`
 name: Tag release
 
 on:
-  # code pushed
   push:
+    branches:
+      - main
 
 jobs:
   # create a new git tag when a version update was merged to main branch
   # see https://github.com/RegioHelden/github-reusable-workflows/blob/main/.github/workflows/tag-release.yaml
   tag-release:
     name: Create tag
-    needs:
-      - lint
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
     uses: RegioHelden/github-reusable-workflows/.github/workflows/tag-release.yaml@main
     secrets:
       personal-access-token: "${{ secrets.COMMIT_KEY }}"
+
 ```
 
 ### Build and publish
@@ -240,8 +256,8 @@ jobs:
 Once the tag is pushed, we will
 
 * Build Python packages (with wheel and source tarball) using `uv build`
-* Publish the package to PyPI
 * Sign the package files and publish a new release on GitHub
+* Publishing to PyPI must be part of the local repo for now as trusted publishing does not work with resuable workflows
 
 #### Parameters
 
@@ -263,9 +279,40 @@ on:
 
 jobs:
   # build package, make release on github and upload to pypi when a new tag is pushed
-  # see https://github.com/RegioHelden/github-reusable-workflows/blob/main/.github/workflows/python-build-and-publish.yaml
+  # see https://github.com/RegioHelden/github-reusable-workflows/blob/main/.github/workflows/build-and-publish.yaml
   build-and-release:
     name: Build and publish
-    uses: regiohelden/github-reusable-workflows/.github/workflows/python-build-and-publish.yaml@main
+    permissions:
+      contents: write
+      id-token: write
+    uses: regiohelden/github-reusable-workflows/.github/workflows/build-and-publish.yaml@main
+
+  # must be defined in the repo as trusted publishing does not work with reusable workflows yet
+  # see https://github.com/pypi/warehouse/issues/11096
+  publish-pypi:
+    name: Publish on PyPI
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    needs:
+      - build-and-release
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Download the distribution packages
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish
+        run: uv publish --trusted-publishing always
 
 ```
