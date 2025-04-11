@@ -8,7 +8,7 @@ Read and write access to code, issues and pull requests is needed.
 
 ## Protect your main branch
 
-To enforce that all changes are only coming in through pull requests, we need to protect the main branch of our repository
+To enforce that all changes are only coming in through pull requests, you need to protect the main branch of our repository
 
 As a repository admin
 
@@ -56,6 +56,20 @@ As an organization admin, set the token as the `COMMIT_KEY` secret on your organ
 * In the `Security` section open `Secrets and variables`
 * Go to `Actions`
 * Create a `New organization secret` called `COMMIT_KEY` with the token
+
+## Set up trusted publishing
+
+To deploy your packages to PyPI, you first need to set up trusted publishing there.
+
+As a PyPI project admin
+
+* Go to the project management view on PyPI
+* Select menu `Publishing`
+* Add a new entry for GitHub using the following settings
+  * Owner: The GitHub organization owning the repository
+  * Repository name: The name of the repository
+  * Workflow name: If you follow the naming guidelines below, use `build-and-publish.yaml`
+  * Environment name: leave empty
 
 # Usage
 
