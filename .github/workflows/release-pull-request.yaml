@@ -22,6 +22,10 @@ jobs:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v5
 
+      - name: Get version from pyproject.toml
+        id: project-version
+        run: echo "PROJECT_VERSION=$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.version)" >> $GITHUB_OUTPUT
+
       - name: Get next version
         uses: MiguelRipoll23/get-next-version@v3.0.0
         id: get-next-version
@@ -39,6 +43,7 @@ jobs:
         uses: janheinrichmerker/action-github-changelog-generator@v2.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          sinceTag: v${{ steps.project-version.outputs.PROJECT_VERSION }}
           futureRelease: ${{ steps.get-next-version.outputs.next-version }}
           breakingLabels: backwards-incompatible,breaking
           removedLabels: removal
