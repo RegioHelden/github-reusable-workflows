@@ -24,7 +24,7 @@ jobs:
 
       - name: Get version from repository
         id: project-version
-        run: cat version >> $GITHUB_OUTPUT
+        run: echo "PROJECT_VERSION=$(cat version)" >> $GITHUB_OUTPUT
 
       - name: Get next version
         uses: MiguelRipoll23/get-next-version@v3.0.0
@@ -35,7 +35,7 @@ jobs:
           patch-labels: bug
 
       - name: Update version in repository
-        run: echo "${{ env.NEXT_VERSION }}" > version
+        run: echo "${{ env.NEXT_VERSION }}" | grep -oE '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?' > version
         env:
           NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
 
