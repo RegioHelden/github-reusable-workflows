@@ -71,7 +71,7 @@ As a PyPI project admin
   * Workflow name: If you follow the naming guidelines below, use `build-and-publish.yaml`
   * Environment name: leave empty
 
-The project that should be managed by the workflows must have at least one tag in the form of `vX.X.X` and a release for that tag on GitHub. The release version (without `v`) must match the current version in the `pyproject.toml`.
+The project that should be managed by the workflows must have at least one tag in the form of `vX.X.X` and a release for that tag on GitHub. The release version (without `v`) must match the current version in the `version` file in the repository root.
 
 # Usage
 

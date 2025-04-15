@@ -36,7 +36,7 @@ jobs:
 
       - name: Get version from pyproject.toml
         id: project-version
-        run: echo "PROJECT_VERSION=$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.version)" >> $GITHUB_OUTPUT
+        run: echo "PROJECT_VERSION=$(cat version)" >> $GITHUB_OUTPUT
 
       - name: Get latest git tag
         id: latest-tag
