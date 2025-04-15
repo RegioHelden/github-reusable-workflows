@@ -2,12 +2,6 @@
 
 on:
   workflow_call:
-    inputs:
-      python-version:
-        description: "The Python version used during the build"
-        default: "3.12"
-        required: false
-        type: string
     secrets:
       personal-access-token:
         required: true
