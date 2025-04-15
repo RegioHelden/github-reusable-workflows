@@ -2,6 +2,12 @@
 
 on:
   workflow_call:
+    inputs:
+      python-version:
+        description: "The Python version used during the build"
+        default: "3.12"
+        required: false
+        type: string
     secrets:
       personal-access-token:
         required: true
@@ -22,9 +28,9 @@ jobs:
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v5
 
-      - name: Get version from pyproject.toml
+      - name: Get version from repository
         id: project-version
-        run: echo "PROJECT_VERSION=$(uvx --from=toml-cli toml get --toml-path=pyproject.toml project.version)" >> $GITHUB_OUTPUT
+        run: cat version >> $GITHUB_OUTPUT
 
       - name: Get next version
         uses: MiguelRipoll23/get-next-version@v3.0.0
@@ -34,8 +40,8 @@ jobs:
           minor-labels: feature,enhancement,improvement
           patch-labels: bug
 
-      - name: Update version in pyproject.toml
-        run: uvx --from=toml-cli toml set --toml-path=pyproject.toml project.version `echo ${{ env.NEXT_VERSION }} | grep -oE '([0-9]{1,}.[0-9]{1,}.[0-9]{1,})?'`
+      - name: Update version in repository
+        run: echo "${{ env.NEXT_VERSION }}" > version
         env:
           NEXT_VERSION: ${{ steps.get-next-version.outputs.next-version }}
 
