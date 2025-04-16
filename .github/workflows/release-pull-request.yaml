@@ -47,7 +47,7 @@ jobs:
           futureRelease: ${{ steps.get-next-version.outputs.next-version }}
           breakingLabels: backwards-incompatible,breaking
           removedLabels: removal
-          enhancementLabels: feature,enhancement,improvement
+          enhancementLabels: feature,enhancement,improvement,infrastucture
           bugLabels: bug
           excludeLabels: skip-changelog
           output: CHANGELOG.md
