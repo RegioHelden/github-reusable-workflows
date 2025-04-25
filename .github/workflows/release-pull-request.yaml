@@ -20,7 +20,7 @@ jobs:
           token: "${{ secrets.personal-access-token }}"
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
 
       - name: Get version from repository
         id: project-version
