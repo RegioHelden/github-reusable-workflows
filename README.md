@@ -88,6 +88,8 @@ Using these workflows to publish a release follows specific rules.
 
 We will need to create five workflow files in our target repository that will be triggered by different events.
 
+The easiest way is to integrate your project with our [modulesync setup for FOSS Django libraries](https://github.com/RegioHelden/modulesync-config-django). This will automatically push all actions to your target repository. You will then just need to create a `workflow.yaml` with your project specific test setup and the `ruff` integration. See `Check code` below.
+
 ### Sync labels
 
 We're syncing labels from our central definition at https://github.com/RegioHelden/.github/blob/main/labels.yaml to be sure that all projects are handled in the same way.
