@@ -19,9 +19,6 @@ jobs:
         with:
           token: "${{ secrets.personal-access-token }}"
 
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v6
-
       - name: Get version from repository
         id: project-version
         run: echo "PROJECT_VERSION=$(cat version)" >> $GITHUB_OUTPUT
