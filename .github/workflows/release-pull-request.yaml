@@ -5,6 +5,11 @@ on:
     secrets:
       personal-access-token:
         required: true
+    inputs:
+      changelog-since-tag:
+        description: "The tag from which the changelog generation should start"
+        required: true
+        type: string
 
 jobs:
   open-release-pr:
@@ -20,10 +25,6 @@ jobs:
           token: "${{ secrets.personal-access-token }}"
           fetch-depth: 0
           fetch-tags: true
-
-      - name: Get version from repository
-        id: project-version
-        run: echo "PROJECT_VERSION=$(cat version)" >> $GITHUB_OUTPUT
 
       - name: Get next version
         uses: MiguelRipoll23/get-next-version@v3.0.0
@@ -42,7 +43,7 @@ jobs:
         uses: janheinrichmerker/action-github-changelog-generator@v2.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          sinceTag: v${{ steps.project-version.outputs.PROJECT_VERSION }}
+          sinceTag: ${{ inputs.changelog-since-tag }}
           futureRelease: ${{ steps.get-next-version.outputs.next-version }}
           breakingLabels: backwards-incompatible,breaking
           removedLabels: removal
