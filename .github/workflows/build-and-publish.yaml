@@ -59,9 +59,9 @@ jobs:
       - name: Sign distribution packages
         uses: sigstore/gh-action-sigstore-python@v3.0.1
         with:
-          inputs: |
-            ./dist/*.tar.gz
-            ./dist/*.whl
+          inputs: ./dist/*.tar.gz ./dist/*.whl
+          upload-signing-artifacts: true
+          release-signing-artifacts: false
 
       - name: Create GitHub release
         env:
