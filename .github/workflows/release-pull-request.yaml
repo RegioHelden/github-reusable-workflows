@@ -1,5 +1,7 @@
 ---
 
+name: Open release PR
+
 on:
   workflow_call:
     secrets:

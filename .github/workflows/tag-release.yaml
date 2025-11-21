@@ -1,5 +1,7 @@
 ---
 
+name: Create tag for new release
+
 on:
   workflow_call:
     secrets:

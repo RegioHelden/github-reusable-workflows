@@ -1,5 +1,7 @@
 ---
 
+name: Build and publish on GitHub
+
 on:
   workflow_call:
     inputs:

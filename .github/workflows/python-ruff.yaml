@@ -1,5 +1,7 @@
 ---
 
+name: Ruff linting
+
 on:
   workflow_call:
     inputs:
