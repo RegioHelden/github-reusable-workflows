@@ -20,7 +20,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Check out repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: "${{ secrets.personal-access-token }}"
           fetch-depth: 0
