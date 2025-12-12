@@ -65,7 +65,7 @@ jobs:
           upload-signing-artifacts: true
           release-signing-artifacts: false
 
-      - name: Create GitHub release
+      - name: Create GitHub draft release
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: >-
@@ -75,11 +75,21 @@ jobs:
           --title "Release ${{ github.ref_name }}"
           --notes "see CHANGLOG.md"
           --latest
+          --draft
 
-      - name: Upload artifacts and signatures to GitHub release
+      - name: Upload artifacts and signatures to GitHub draft release
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: >-
           gh release upload
           "${{ github.ref_name }}" dist/**
           --repo "${{ github.repository }}"
+
+      - name: Publish GitHub release (make non-draft)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          gh release edit
+          "${{ github.ref_name }}"
+          --repo "${{ github.repository }}"
+          --draft=false
