@@ -49,8 +49,9 @@ jobs:
           futureRelease: ${{ steps.get-next-version.outputs.next-version }}
           breakingLabels: backwards-incompatible,breaking
           removedLabels: removal
-          enhancementLabels: feature,enhancement,improvement,infrastructure
+          enhancementLabels: feature,enhancement,improvement
           bugLabels: bug
+          securityLabel: infrastructure
           excludeLabels: skip-changelog
           output: CHANGELOG.md
           usernamesAsGithubLogins: true
