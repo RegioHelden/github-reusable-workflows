@@ -29,7 +29,7 @@ jobs:
           fetch-tags: true
 
       - name: Get next version
-        uses: MiguelRipoll23/get-next-version@v3.2.0
+        uses: MiguelRipoll23/get-next-version@v3.2.1
         id: get-next-version
         with:
           major-labels: backwards-incompatible,breaking,removal
